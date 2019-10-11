@@ -111,66 +111,7 @@ With the monitor as the interface open a new python file.
 sudo nano scope.py 
 
 
-With the file created, the first thing we do is import the modules we will be using; 
-import time 
-import matplotlib.pyplot as plt 
-from drawnow import * 
-import Adafruit_ADS1x15 
-Next, we create an instance of the ADS1x15 library specifying the ADS1115 ADC 
-adc = Adafruit_ADS1x15.ADS1115() 
-Next, we set the gain of the ADC. There are different ranges of gain and should be chosen based on the voltage you are expecting at the input of the ADC. For this practical, we will be using a gain of 1. 
 
-GAIN = 1 
-
-Next, we need to create the array variables that will be used to store the data to be plotted and another one to serve as count. 
-
-Val = [ ] 
-cnt = 0
- 
-Next, we make the plot interactive to help us in enabling to plot the data live. 
-
-plt.ion() 
-
-Next, we start continuous ADC conversion specifying the ADC channel, in this case, channel 0 and we also specify the gain.  It should be noted that all the four ADC channels on the ADS1115 can be read at the same time, but 1 channel is enough for this demonstration. 
-
-adc.start_adc(0, gain=GAIN) 
-
-Next we create a function def makeFig, to create and set the attributes of the graph which will hold our live plot. We first of all set the limits of the y-axis using ylim, after which we input the title of the plot, and the label name before we specify the data that will be plotted and its plot style and color using plt.plot(). We can also state the channel (as channel 0 was stated) so we can identify each signal when the four channels of the ADC are being used. plt.legend is used to specify where we want the information about that signal(e.g Channel 0) displayed on the figure. 
-
-plt.ylim(-5000,5000) 
-plt.title('Osciloscope') 
-plt.grid(True) 
-plt.ylabel('ADC outputs') 
-plt.plot(val, 'ro-', label='lux') 
-plt.legend(loc='lower right') 
-
-Next we write the while loop which will be used constantly read data from the ADC and update the plot accordingly. 
-The first thing we do is read the ADC conversion value 
-value = adc.get_last_result() 
-
-Next we print the value on the terminal just to give us another way of confirming the plotted data. We wait a few seconds after printing then we append the data to the list (val) created to store the data for that channel. 
-print('Channel 0: {0}'.format(value)) 
-time.sleep(0.5) 
-val.append(int(value)) 
-
-We then call drawnow to update the plot. 
-drawnow(makeFig) 
-
-To ensure the latest data is what is available on the plot, we delete the data at index 0 after every 50 data counts. 
-
-cnt = cnt+1 
-if(cnt>50): 
-val.pop(0) 
-
-Save the code and run using; 
-
-sudo python scope.py 
-
-After a few minutes, you should see the ADC data being printed on the terminal. Occasionally you may get a warning from matplotlib (as shown in the image below) which should be suppressed but it doesn’t affect the data being displayed or the plot in anyway. To suppress the warning however, the following lines of code can be added after the import lines in our code. 
-
-import warnings 
-import matplotlib.cbook 
-warnings.filterwarnings(“ignore”, category=matplotlib.cbook.mplDeprecation) 
 
 
 
